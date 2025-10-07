@@ -4,7 +4,7 @@
     ami_id: ami-09c813fb71547fc4f
     sg_id: sg-062ee2abee617cab7 # replace with your SG ID
     zone_id: "Z011643715JP8CMWCW5FX" # replace with your ID
-    domain_name: "daws86s.fun"
+    domain_name: "manjunatha.space"
     instances: 
     - mongodb
     - redis
@@ -34,5 +34,16 @@
   - name: print private_ip
     ansible.builtin.debug: 
       msg: "{{ item.instances[0].private_ip_address }}"
+    loop: "{{ ec2_output.results }}"
+
+  - name: create route53 module
+    amazon.aws.route53:
+      state: present
+      zone: "{{ domain_name }}"
+      record: "{{ item.item}}.{{ domain_name }}" # record name is mongodb.manjunatha.space
+      type: A
+      ttl: 72100
+      value: "{{ item.instances[0].private_ip_address }}"
+      overwrite: true
     loop: "{{ ec2_output.results }}"
 
