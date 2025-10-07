@@ -4,8 +4,8 @@
   vars:
     ami_id: ami-09c813fb71547fc4f
     sg_id: sg-062ee2abee617cab7
-    zone_id: Z011643715JP8CMWCW5FX
-    domain_name: manjunatha.space
+    zone_id: "Z011643715JP8CMWCW5FX"
+    domain_name: "manjunatha.space"
     instances:
     - mongodb
     - redis
