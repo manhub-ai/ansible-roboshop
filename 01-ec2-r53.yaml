@@ -1,0 +1,27 @@
+- name: Create Aws Instance and Route53 record
+  hosts: localhost
+  become: yes
+  vars:
+    ami_id: ami-09c813fb71547fc4f
+    sg_id: sg-062ee2abee617cab7
+    zone_id: Z011643715JP8CMWCW5FX
+    domain_name: manjunatha.space
+    instances:
+    - mongodb
+    - redis
+  tasks:
+  - name: create an ec2 instance
+    amazon.aws.ec2_instance:
+      name: "{{ item }}"
+      instance_type: t3.micro
+      security_group: "{{ sg_id }}"
+      image_id: "{{ ami_id }}"
+      tags:
+        Name: "{{ item }}"
+    loop: "{{ instances}}"
+    register: ec2_output
+
+- name: Print the output
+  ansible.builtin.debug:
+    msg: "{{  ec2_output }}"
+
