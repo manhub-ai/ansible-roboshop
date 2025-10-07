@@ -1,20 +1,20 @@
-- name: Create Aws Instance and Route53 record
+- name: create ec2 and r53
   hosts: localhost
-  become: yes
   vars:
     ami_id: ami-09c813fb71547fc4f
-    sg_id: sg-062ee2abee617cab7
-    zone_id: "Z011643715JP8CMWCW5FX"
-    domain_name: "manjunatha.space"
-    instances:
+    sg_id: sg-07c8acf3fa6b923fa # replace with your SG ID
+    zone_id: "Z0948150OFPSYTNVYZOY" # replace with your ID
+    domain_name: "daws86s.fun"
+    instances: 
     - mongodb
     - redis
+    - mysql
+    - rabbitmq
   tasks:
   - name: create ec2 instance
     amazon.aws.ec2_instance:
       name: "{{ item }}"
       instance_type: t3.micro
-      region: us-east-1  # 👈 Add your region her
       security_group: "{{ sg_id }}"
       image_id: "{{ ami_id }}"
       tags:
@@ -25,3 +25,4 @@
   - name: print the ec2_output
     ansible.builtin.debug:
       msg: "{{ ec2_output }}"
+
