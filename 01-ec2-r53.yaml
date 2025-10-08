@@ -7,9 +7,7 @@
     domain_name: "manjunatha.space"
     instances: 
     - mongodb
-    - redis
-    - mysql
-    - rabbitmq
+    
   tasks:
   - name: create ec2 instance
     amazon.aws.ec2_instance:
