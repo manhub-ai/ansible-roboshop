@@ -5,8 +5,9 @@
     sg_id: sg-062ee2abee617cab7 # replace with your SG ID
     zone_id: "Z011643715JP8CMWCW5FX" # replace with your ID
     domain_name: "manjunatha.space"
-    instances: 
-    - rabbitmq
+    # we can pass instances from command line.. using -e
+    # instances: 
+    # - rabbitmq
     
   tasks:
   - name: create ec2 instance
