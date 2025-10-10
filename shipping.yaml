@@ -1,7 +1,7 @@
 - name: configure shipping server
   hosts: shipping
   become: yes
-  taks:
+  tasks:
   - name: install maven 
     ansible.builtin.dnf: 
       name: "{{ item }}"
