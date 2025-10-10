@@ -2,64 +2,70 @@
   hosts: shipping
   become: yes
   tasks:
-  - name: install maven 
-    ansible.builtin.dnf: 
+  - name: install maven
+    ansible.builtin.dnf:
       name: "{{ item }}"
       state: present
     loop:
     - maven
     - mysql
-  
+
+  - name: install mysql python libraries
+    ansible.builtin.pip:
+      executable: pip3.9
+      name: "{{ item }}"
+    loop:
+    - cryptography
+    - PyMySQL
+
   - name: create roboshop system user
     ansible.builtin.user:
       name: roboshop
-      comment: roboshop system user
+      comment: RoboShop System user
       system: true
       shell: /sbin/nologin
       home: /app
 
-  - name: remove existing folder
+  - name: remove app directory
     ansible.builtin.file:
       path: /app
       state: absent
-      
+
   - name: create app directory
     ansible.builtin.file:
       state: directory
       path: /app
 
-  - name: delete shipping file
+  - name: Delete shipping file
     ansible.builtin.file:
-      path: /etc/shipping.zip
+      path: /tmp/shipping.zip
       state: absent
-  
+
   - name: download shipping application
     ansible.builtin.get_url:
       url: https://roboshop-artifacts.s3.amazonaws.com/shipping-v3.zip
       dest: /tmp/shipping.zip
 
-  - name: unzip shipping
+  - name: extract shipping application
     ansible.builtin.unarchive:
       src: /tmp/shipping.zip
       dest: /app
       remote_src: yes
 
-  - name: install dependencies 
+  - name: install dependencies
     ansible.builtin.command: mvn clean package
     args:
       chdir: /app
 
-  - name: move jar files
+  - name: move jar file
     ansible.builtin.command: mv target/shipping-1.0.jar shipping.jar
     args:
       chdir: /app
 
-  - name: daemon reload enable and start
-    ansible.builtin.systemd_service:
-      name: shipping
-      enabled: true
-      state: started
-      daemon_reload: true
+  - name: copy shipping service
+    ansible.builtin.copy:
+      src: shipping.service
+      dest: /etc/systemd/system/shipping.service
 
   - name: import shipping data into mysql
     community.mysql.mysql_db:
@@ -80,4 +86,3 @@
       enabled: true
       state: started
       daemon_reload: true
-  
